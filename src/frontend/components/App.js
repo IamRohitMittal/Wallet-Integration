@@ -30,23 +30,27 @@ function App() {
     const marketplace = await ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer);
     setMarketplace(marketplace);
     const nft = await ethers.Contract(NFTAddress.address, NFTAbi.abi, signer);
-    setNFT(nft);
     setLoading(false);
+    setNFT(nft);
   }
 
   const web3Handler = async () => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    console.log(accounts);
-    setAccount(accounts[1]);
+    setAccount(accounts[0]);
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-    console.log(await provider.getBlockNumber())
     const signer = provider.getSigner();
-
-    loadContracts(signer);
+    const mp = new ethers.Contract(MarketplaceAddress.address, MarketplaceAbi.abi, signer);
+    setMarketplace(mp);
+    const nftObject = new ethers.Contract(NFTAddress.address, NFTAbi.abi, signer);
+    setNFT(nftObject);
+    setLoading(false);
   }
+  console.log(`loading : ${loading}`)
+  console.log(nft);
+  
   return (
+    
     <BrowserRouter>
-    {console.log(`loading : ${loading}`)}
       <div className="App">
         <>
           <Navigation web3Handler={web3Handler} account={account} />
@@ -57,22 +61,22 @@ function App() {
               <Spinner animation="border" style={{ display: 'flex' }} />
               <p className='mx-3 my-0'>Awaiting Metamask Connection...</p>
             </div>
-          ) : null//(
-            // <Routes>
-            //   <Route path="/" element={
-            //     <Home marketplace={marketplace} nft={nft} />
-            //   } />
-            //   <Route path="/create" element={
-            //     <Create marketplace={marketplace} nft={nft} />
-            //   } />
-            //   <Route path="/my-listed-items" element={
-            //     <MyListedItems marketplace={marketplace} nft={nft} account={account} />
-            //   } />
-            //   <Route path="/my-purchases" element={
-            //     <MyPurchases marketplace={marketplace} nft={nft} account={account} />
-            //   } />
-            // </Routes>
-          //)
+          ) : (
+            <Routes>
+              <Route path="/" element={
+                <Home marketplace={marketplace} nft={nft} />
+              } />
+              <Route path="/create" element={
+                <Create marketplace={marketplace} nft={nft} />
+              } />
+              <Route path="/my-listed-items" element={
+                <MyListedItems marketplace={marketplace} nft={nft} account={account} />
+              } />
+              <Route path="/my-purchases" element={
+                <MyPurchases marketplace={marketplace} nft={nft} account={account} />
+              } />
+            </Routes>
+          )
         }
         </div>
       </div>
