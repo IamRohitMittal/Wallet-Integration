@@ -1,4 +1,5 @@
 const { ethers } = require("hardhat");
+const WETH_RINKEBY_ADDRESS = '0xc778417E063141139Fce010982780140Aa0cD5Ab'
 
 async function main() {
 
@@ -14,19 +15,24 @@ async function main() {
   const marketPlace = await MarketPlace.deploy(1);
   const WETH = await  ethers.getContractFactory("WETH");
   const weth = await WETH.deploy();
+  const PaymentProcessor = await  ethers.getContractFactory("PaymentProcessor");
+  const paymentProcessor = await PaymentProcessor.deploy(marketPlace.address, WETH_RINKEBY_ADDRESS);
   const CarFactory = await  ethers.getContractFactory("CarFactory");
   const carFactory = await CarFactory.deploy();
+  // await paymentProcessor.faucet()
+  console.log(nft);
+  console.log(`NFT Address : ${nft.address} , NFT ABI : ${nft.interface}`);
+  console.log(`marketPlace Address : ${marketPlace.address} , marketPlace ABI : ${marketPlace.interface}`);
+  console.log(`weth Address : ${weth.address} , weth ABI : ${weth.interface}`);
+  console.log(`carFactory Address : ${carFactory.address} , carFactory ABI : ${carFactory.interface}`);
+  console.log(`paymentProcessor Address : ${paymentProcessor.address} , paymentProcessor ABI : ${paymentProcessor.interface}`);
 
-  console.log(nft.address);
-  console.log(marketPlace.address);
-  console.log(weth.address);
-  console.log(carFactory.address);
-  
   // For each contract, pass the deployed contract and name to this function to save a copy of the contract ABI and address to the front end.
   saveFrontendFiles(nft,"NFT");
   saveFrontendFiles(marketPlace,"Marketplace");
   saveFrontendFiles(weth,"WETH");
   saveFrontendFiles(carFactory,"CarFactory");
+  saveFrontendFiles(paymentProcessor,"PaymentProcessor");
 }
 
 function saveFrontendFiles(contract, name) {
